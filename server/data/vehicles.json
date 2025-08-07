@@ -1,0 +1,4 @@
+[
+  { "id": "v1", "name": "Truck A", "lat": 51.4501, "lng": 7.0166, "speed": 60 },
+  { "id": "v2", "name": "Truck B", "lat": 51.4601, "lng": 7.0266, "speed": 45 }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "id": "d1",
+    "name": "Alice Smith",
+    "license": "DE-12345"
+  },
+  {
+    "id": "d2",
+    "name": "Bob Müller",
+    "license": "DE-67890"
+  }
+]
