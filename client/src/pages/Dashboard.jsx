@@ -7,7 +7,7 @@ const Dashboard = () => {
   const [filterSpeed, setFilterSpeed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const BACKEND_URL = 'https://fleet-dashboard-git-main-devangi-gandhis-projects.vercel.app/'; // Replace with your URL
+  const BACKEND_URL = 'https://fleet-dashboard-lyart.vercel.app'; // Replace with your URL
 
 
   useEffect(() => {
