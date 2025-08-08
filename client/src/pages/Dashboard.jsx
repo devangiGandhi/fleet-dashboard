@@ -7,9 +7,12 @@ const Dashboard = () => {
   const [filterSpeed, setFilterSpeed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const BACKEND_URL = 'https://fleet-dashboard-git-main-devangi-gandhis-projects.vercel.app/'; // Replace with your URL
+
 
   useEffect(() => {
-    axios.get('http://localhost:3001/api/vehicles')
+    //axios.get('http://localhost:3001/api/vehicles')
+    axios.get(`${BACKEND_URL}/api/vehicles`)
       .then(res => setVehicles(res.data));
   }, []);
 
