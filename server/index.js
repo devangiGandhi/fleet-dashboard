@@ -5,8 +5,10 @@ const vehicles = require('./data/vehicles.json');
 const vehicleRoutes = require('./routes/vehicles');
 const driverRoutes = require('./routes/drivers');
 
+
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 app.get('/api/vehicles', (req, res) => {
   res.json(vehicles);
@@ -16,7 +18,8 @@ app.get('/api/vehicles', (req, res) => {
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/drivers', driverRoutes);
 
-const PORT = 3001;
+//const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`🚚 Backend server running on http://localhost:${PORT}`);
 });
