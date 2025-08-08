@@ -18,6 +18,7 @@ const Dashboard = () => {
 
     // Initial fetch
   useEffect(() => {
+    //axios.get(`${BACKEND_URL}/api/vehicles`)
     axios.get('http://localhost:3001/api/vehicles')
       .then(res => {
         setVehicles(res.data);
