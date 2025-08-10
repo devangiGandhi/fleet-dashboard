@@ -1,15 +1,12 @@
-const express = require('express');
-const cors = require('cors');
-const vehicles = require('./data/vehicles.json');
-
-const vehicleRoutes = require('./routes/vehicles');
-const driverRoutes = require('./routes/drivers');
-
-
+import express from "express";
+import cors from "cors"
+import vehicleRoutes from "./routes/vehicles.js";
+import driverRoutes from "./routes/drivers.js"
+import fs from "fs";
+const vehicles = JSON.parse(fs.readFileSync("./data/vehicles.json", "utf-8"));
 const app = express();
 app.use(cors());
 app.use(express.json());
-
 app.get('/api/vehicles', (req, res) => {
   res.json(vehicles);
 });

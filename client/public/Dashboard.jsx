@@ -1,31 +1,30 @@
+// src/pages/Dashboard.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import truckIconImg from '../assets/truck-icon.png';
-import truckBlue from '../assets/truck-blue.png';
-import truckRed from '../assets/truck-red.png';
 import Analytics from './Analytics';
-import VehicleRoute from "../components/VehicleRoute";
+import VehicleRoute from '../components/VehicleRoute';
 import { haversineDistance } from '../utils/geo';
 
+// --- ICONS (stored in /public folder for reliability) ---
 const blueIcon = new L.Icon({
-  iconUrl: truckIconImg,
+  iconUrl: '/truck-icon.png',
   iconSize: [35, 35],
   iconAnchor: [17, 35],
   popupAnchor: [0, -35],
 });
 
 const greenIcon = new L.Icon({
-  iconUrl: truckBlue,
+  iconUrl: '/truck-blue.png',
   iconSize: [35, 35],
   iconAnchor: [17, 35],
   popupAnchor: [0, -35],
 });
 
 const redIcon = new L.Icon({
-  iconUrl: truckRed,
+  iconUrl: '/truck-red.png',
   iconSize: [35, 35],
   iconAnchor: [17, 35],
   popupAnchor: [0, -35],
@@ -44,13 +43,8 @@ const Dashboard = () => {
   const [error, setError] = useState(false);
   const [history, setHistory] = useState([]);
   const [view, setView] = useState('map');
-  const [selectedVehicleId, setSelectedVehicleId] = useState(null);
-  
-  const BACKEND_URL = 'http://localhost:3001';
-  const total = vehicles.length;
-  const fast = vehicles.filter(v => v.speed > 50).length;
-  const slow = vehicles.filter(v => v.speed > 0 && v.speed <= 50).length;
-  const idle = vehicles.filter(v => v.speed === 0).length;
+
+  const BACKEND_URL = 'http://localhost:3001'; // Change when deploying
 
   // Initial fetch
   useEffect(() => {
@@ -65,7 +59,7 @@ const Dashboard = () => {
       });
   }, []);
 
-  // Speed history tracker
+  // Speed history logging
   useEffect(() => {
     const interval = setInterval(() => {
       const avgSpeed = vehicles.reduce((sum, v) => sum + v.speed, 0) / vehicles.length || 0;
@@ -74,7 +68,7 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [vehicles]);
 
-  // Simulated movement
+  // Simulated movement & ETA updates
   useEffect(() => {
     const interval = setInterval(() => {
       setVehicles(prev =>
@@ -87,16 +81,30 @@ const Dashboard = () => {
             vehicle.destination
           );
           const eta = speed > 0 ? Math.round((distance / speed) * 60) : null;
-          return { ...vehicle, lat: newLat, lng: newLng, speed, distance: distance.toFixed(2), eta };
+
+          return {
+            ...vehicle,
+            lat: newLat,
+            lng: newLng,
+            speed,
+            distance: distance.toFixed(2),
+            eta
+          };
         })
       );
     }, 3000);
+
     return () => clearInterval(interval);
   }, []);
 
   const filteredVehicles = filterSpeed
     ? vehicles.filter(v => v.speed > 50)
     : vehicles;
+
+  const total = vehicles.length;
+  const fast = vehicles.filter(v => v.speed > 50).length;
+  const slow = vehicles.filter(v => v.speed > 0 && v.speed <= 50).length;
+  const idle = vehicles.filter(v => v.speed === 0).length;
 
   if (loading) return <p>Loading vehicles...</p>;
   if (error) return <p>Error loading vehicle data.</p>;
@@ -105,7 +113,7 @@ const Dashboard = () => {
     <div style={{ height: '100vh' }}>
       <h2>Fleet Dashboard</h2>
 
-      {/* Navigation */}
+      {/* View switcher */}
       <div style={{ marginBottom: '1rem' }}>
         <button
           onClick={() => setView('map')}
@@ -151,64 +159,42 @@ const Dashboard = () => {
               attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-
             {filteredVehicles.map(v => (
-              <Marker
-                key={v.id}
-                position={[v.lat, v.lng]}
-                icon={getIconBySpeed(v.speed)}
-                eventHandlers={{
-                  click: () => setSelectedVehicleId(v.id)
-                }}
-              >
-                <Popup>
-                  <strong>{v.name}</strong>
-                  <br />
-                  Speed: {v.speed} km/h
-                  <br />
-                  Distance: {v.distance} km
-                  <br />
-                  ETA: {v.eta ? `${v.eta} min` : "N/A"}
-                  <br />
-                </Popup>
-              </Marker>
+              <React.Fragment key={v.id}>
+                <Marker position={[v.lat, v.lng]} icon={getIconBySpeed(v.speed)}>
+                  <Popup>
+                    <strong>{v.name}</strong>
+                    <br />
+                    Speed: {v.speed} km/h
+                    <br />
+                    Distance: {v.distance} km
+                    <br />
+                    ETA: {v.eta ? `${v.eta} min` : 'N/A'}
+                  </Popup>
+                </Marker>
+                <VehicleRoute start={v} end={v.destination} />
+                <Polyline
+                  positions={[
+                    [v.lat, v.lng],
+                    [v.destination.lat, v.destination.lng],
+                  ]}
+                  color="blue"
+                />
+              </React.Fragment>
             ))}
-
-            {/* Only show route for selected vehicle */}
-            {selectedVehicleId && (() => {
-              const vehicle = vehicles.find(v => v.id === selectedVehicleId);
-              if (!vehicle) return null;
-              return (
-                <>
-                  <VehicleRoute
-                    start={{ lat: vehicle.lat, lng: vehicle.lng }}
-                    end={vehicle.destination}
-                  />
-                  <Polyline
-                    positions={[
-                      [vehicle.lat, vehicle.lng],
-                      [vehicle.destination.lat, vehicle.destination.lng],
-                    ]}
-                    color="blue"
-                  />
-                </>
-              );
-            })()}
           </MapContainer>
-          
 
-          <ul>
-            {vehicles.map(v => (
-              <li key={v.id}>
-                {v.name} - Speed: {v.speed} km/h - Location: ({v.lat}, {v.lng}) - ETA: {v.eta} min
-              </li>
-            ))}
-          </ul>
-
-          <div className="stats-panel" style={{ marginBottom: '1rem', padding: '10px', background: '#f0f0f0', borderRadius: '8px' }}>
+          {/* Stats Panel */}
+          <div className="stats-panel" style={{
+            marginTop: '1rem',
+            padding: '10px',
+            background: '#f0f0f0',
+            borderRadius: '8px'
+          }}>
             <p>🚚 Total: {total}</p>
             <p>🔴 Fast: {fast}</p>
             <p>🟢 Slow: {slow}</p>
+            <p>🔵 Idle: {idle}</p>
           </div>
         </>
       ) : (
@@ -216,6 +202,6 @@ const Dashboard = () => {
       )}
     </div>
   );
-}
+};
 
 export default Dashboard;
