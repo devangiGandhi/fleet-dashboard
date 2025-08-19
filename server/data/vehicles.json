@@ -6,15 +6,27 @@
     "lat": 51.4501,
     "lng": 7.0166,
     "speed": 60,
-    "destination": { "lat": 51.52, "lng": 7.5 }
+    "destination": { "lat": 51.52, "lng": 7.5 },
+     "status": "Arrived at destination"
   },
   {
     "id": "v2",
     "name": "Truck B",
     "driverId": "d2",
-    "lat": 51.4601,
+    "lat": 51.3601,
     "lng": 7.0266,
     "speed": 45,
-    "destination": { "lat": 51.55, "lng": 7.48 }
+    "destination": { "lat": 51.65, "lng": 7.38 }, 
+    "status": "Arrived at destination"
+  },
+  {
+    "id": "v3",
+    "name": "Truck C",
+    "driverId": "d3",
+    "lat": 51.5001,
+    "lng": 7.166,
+    "speed": 25,
+    "destination": { "lat": 51.75, "lng": 7.18 }, 
+    "status": "Arrived at destination"
   }
 ]

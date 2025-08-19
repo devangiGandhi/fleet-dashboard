@@ -3,6 +3,9 @@ import cors from "cors"
 import vehicleRoutes from "./routes/vehicles.js";
 import driverRoutes from "./routes/drivers.js"
 import fs from "fs";
+import dotenv from "dotenv";
+dotenv.config();
+import vehicleUpdates from "./routes/vehicleUpdates.js";
 const vehicles = JSON.parse(fs.readFileSync("./data/vehicles.json", "utf-8"));
 const app = express();
 app.use(cors());
@@ -10,6 +13,10 @@ app.use(express.json());
 app.get('/api/vehicles', (req, res) => {
   res.json(vehicles);
 });
+
+app.use("/api/vehicle-updates", vehicleUpdates);
+import { sendWhatsApp } from "./utils/sendWhatsApp.js";
+sendWhatsApp(process.env.MY_PHONE_NUMBER, "Hello from Twilio test!");
 
 
 app.use('/api/vehicles', vehicleRoutes);

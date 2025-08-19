@@ -28,7 +28,7 @@ const Analytics = ({ vehicles, history }) => {
         <Tooltip />
       </PieChart>
 
-      {/* Speed over time */}
+      {/* Speed over time 
       <LineChart width={500} height={300} data={history}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="time" />
@@ -37,7 +37,7 @@ const Analytics = ({ vehicles, history }) => {
         <Legend />
         <Line type="monotone" dataKey="avgSpeed" stroke="#8884d8" />
       </LineChart>
-
+        */}
     </div>
   );
 };
